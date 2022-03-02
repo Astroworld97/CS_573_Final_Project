@@ -1,4 +1,5 @@
 # test
+# website of data: https://www.kaggle.com/felsal/ibovespa-stocks?select=b3_stocks_1994_2020.csv
 import pandas as pd
 
 df = pd.read_csv(
