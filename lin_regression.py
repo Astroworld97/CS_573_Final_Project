@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import sklearn.metrics
 import math
-import sys
 
 brazil_data = pd.read_csv("b3_stocks_1994_2020.csv")
 
