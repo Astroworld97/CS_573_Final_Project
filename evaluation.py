@@ -53,22 +53,6 @@ def get_accuracy_diff(preds, y_test, THRESH):
             correct+=1
     return correct/(len(preds)-1)
 
-def get_accuracy_diff2(preds, y_test, THRESH1, THRESH2):
-    assert len(preds)==len(y_test)
-    preds_arr=list(preds)
-    y_test_arr=list(y_test)
-    correct=0
-    total=0
-    for i in range(1,len(y_test)):
-        if(y_test_arr[i]<THRESH1):
-            total+=1
-            if(preds[i]<THRESH1):
-                correct+=1
-        elif(y_test_arr[i]>THRESH2):
-            total+=1
-            if(preds[i]>THRESH2):
-                correct+=1
-    return correct/(total)
 
 def get_correlation(preds, y_test):
     assert len(preds)==len(y_test)

@@ -6,7 +6,8 @@ import tensorflow as tf
 from evaluation import *
 from neural_net import *
 
-ticker=['VALE3', 'PETR4', 'MGLU3', 'ITUB4', 'GOLL4']
+#ticker=['VALE3', 'PETR4', 'MGLU3', 'ITUB4', 'GOLL4']
+ticker=['VALE3']
 
 lookback_arr=[10, 20, 50]
 lookahead_arr=[1,5, 20]
@@ -18,7 +19,7 @@ for lookback in lookback_arr:
     for lookahead in lookahead_arr:
         conditions.append((lookback, lookahead))
         print(conditions[-1])
-        test_err = run_neural_net(ticker, lookback, lookahead)
+        test_err = run_neural_net_regression(ticker, lookback, lookahead)
         test_err_arr.append(test_err)
         
 
