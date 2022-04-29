@@ -8,34 +8,41 @@ from sklearn.model_selection import train_test_split
 #the previous ten days to predict the price of the eleventh day
 def create_features(df, lookback=10, label_col='close', lookahead=1):
     df=df.sort_values('datetime')
-    cols=['data','label', 'time', 'price', 'class', 'diff']
+    cols=['data','label', 'time', 'price', 'class', 'diff', 'ticker']
     feat_df=pd.DataFrame(columns=cols)
-    data=[]
-    label=[]
-    time=[]
-    price=[]
-    class_arr=[]
-    diff=[]
-    label.append(0)
-    for i in range(lookback, len(df)-lookahead):
-        row=df[i-lookback:i]
-        data.append(row)
-        temp_label=df.iloc[i:i+lookahead][label_col].mean()
-        if(temp_label>label[-1]):
-            class_arr.append(1)
-        else:
-            class_arr.append(0)
-        label.append(temp_label)
-        time.append(df.iloc[i]['datetime'])
-        price.append(df.iloc[i][label_col])
-        diff.append(df.iloc[i-1][label_col]-df.iloc[i-2][label_col])
-    label.remove(0)
-    feat_df['data']=data
-    feat_df['label']=label
-    feat_df['time']=time
-    feat_df['price']=price
-    feat_df['class']=class_arr
-    feat_df['diff']=diff
+    for t in df['ticker'].unique():
+        t_feat_df=pd.DataFrame(columns=cols)
+        temp_df=df[df['ticker']==t]
+        data=[]
+        label=[]
+        time=[]
+        price=[]
+        class_arr=[]
+        diff=[]
+        ticker=[]
+        label.append(0)
+        for i in range(lookback, len(temp_df)-lookahead):
+            row=temp_df[i-lookback:i]
+            data.append(row)
+            temp_label=temp_df.iloc[i:i+lookahead][label_col].mean()
+            if(temp_label>label[-1]):
+                class_arr.append(1)
+            else:
+                class_arr.append(0)
+            label.append(temp_label)
+            time.append(temp_df.iloc[i]['datetime'])
+            price.append(temp_df.iloc[i][label_col])
+            diff.append(temp_label-temp_df.iloc[i-1][label_col])
+            ticker.append(temp_df.iloc[i]['ticker'])
+        label.remove(0)
+        t_feat_df['data']=data
+        t_feat_df['label']=label
+        t_feat_df['time']=time
+        t_feat_df['price']=price
+        t_feat_df['class']=class_arr
+        t_feat_df['diff']=diff
+        t_feat_df['ticker']=ticker
+        feat_df=pd.concat([feat_df, t_feat_df], ignore_index=True)
     return feat_df
 
 
@@ -96,30 +103,17 @@ def extract_features_cols(df, lookback=10):
                 temp_arr.append(df.iloc[k]['data'].iloc[i-1][col])
             out_df[col_name]=temp_arr
     #add label col
-    label=[]
-    for i in range(len(df)):
-        label.append(df.iloc[i]['label'])
-    out_df['label']=label
+    out_df.loc[:,'label']=df['label']
     #add time col
-    time=[]
-    for i in range(len(df)):
-        time.append(df.iloc[i]['time'])
-    out_df['time']=time
+    out_df.loc[:,'time']=df['time']
     #add price col
-    price=[]
-    for i in range(len(df)):
-        price.append(df.iloc[i]['price'])
-    out_df['price']=price
+    out_df.loc[:,'price']=df['price']
     #add class col
-    class_arr=[]
-    for i in range(len(df)):
-        class_arr.append(df.iloc[i]['class'])
-    out_df['class']=class_arr
+    out_df.loc[:,'class']=df['class']
     #add class col
-    diff=[]
-    for i in range(len(df)):
-        diff.append(df.iloc[i]['diff'])
-    out_df['diff']=diff
+    out_df.loc[:,'diff']=df['diff']
+    #add ticker col
+    out_df['ticker']=df['ticker']
     return out_df
 
 
@@ -134,21 +128,27 @@ def get_ticker_data(ticker_arr):
 def get_sma(arr: pd.Series, period):
     sma=[]
     for i in range(period, len(arr)):
-        sma.append()
+        sma.append(arr[i-period-1:i-1].mean())
+    return sma
 
-def split_test_set(df: pd.DataFrame, random=False, pctg=0.3):
-    if(not random):
-        test_df=pd.DataFrame()
-        train_df=pd.DataFrame()
+def split_test_set(df: pd.DataFrame, by_ticker=False, test_ticker='PETR4'):
+    test_df=pd.DataFrame()
+    train_df=pd.DataFrame()
+    if(not by_ticker):
         test_df=df[df['time']>'2020-01-01']
         train_df=df[df['time']<'2020-01-01']
     else:
-        test_df, train_df = None, None
+        test_df=df[df['ticker']==test_ticker].copy(deep=True).reset_index(drop=True)
+        train_df=df[df['ticker']!=test_ticker].copy(deep=True).reset_index(drop=True)
     return train_df, test_df
 
-def normalize_cols(df, cols):
+def normalize_cols(df, cols): #min max norm
     for col in cols:
         df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+
+def standardize_cols(df, cols):
+    for col in cols:
+        df.loc[:, col]=(df[col]-df[col].mean())/df[col].std()
 
 #TODO
 def split_test_set_by_ticker():

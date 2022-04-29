@@ -7,10 +7,12 @@ from evaluation import *
 from neural_net import *
 
 #ticker=['VALE3', 'PETR4', 'MGLU3', 'ITUB4', 'GOLL4']
-ticker=['VALE3']
+ticker=['VALE3', 'PETR4', 'MGLU3', 'VVAR3', 'ITUB4', 'GOLL4', 'LREN3', 'WEGE3', 'CTSA4', 'EZTC3', 'GGBR4',
+            'MRFG3', 'SULA11', 'IRBR3', 'TAEE11', 'SUZB3']
+#ticker=['VALE3', 'PETR4']
 
-lookback_arr=[10, 20, 50]
-lookahead_arr=[1,5, 20]
+lookback_arr=[10]
+lookahead_arr=[1]
 test_err_arr=[]
 conditions=[]
 
@@ -24,4 +26,7 @@ for lookback in lookback_arr:
         
 
 print(test_err_arr)
-print(conditions)
+
+
+#TODO:
+#       - implement sma as added feature
