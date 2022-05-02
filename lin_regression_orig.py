@@ -187,7 +187,7 @@ try:
         # print("R^2: " + str(r2))
 except:
     nothing = ""
-mseLowNP = np.array(mseLowList)
+mseLowNP = np.array(mseLowList)  # NP = numpy
 mseLowSeries = pd.Series(mseLowNP)
 rmseLowNP = np.array(rmseLowList)
 rmseLowSeries = pd.Series(rmseLowNP)

@@ -27,7 +27,7 @@ LOOKAHEAD = 2
 LABEL_COL = "close"
 
 
-def run_neural_net(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
+def run_neural_net_regression(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
 
     # load data
     raw_df = get_ticker_data(TICKER)
@@ -39,7 +39,6 @@ def run_neural_net(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
 
     # extract features
     temp = extract_features_cols(raw_df, lookback=LOOKBACK)
-    conv_df = None
 
     train_df, test_df = split_test_set(temp)
     normalize_cols(train_df, set(train_df.columns).difference({"time"}))
@@ -57,13 +56,10 @@ def run_neural_net(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
     dense_model.add(tf.keras.Input(shape=data_shape))
     dense_model.add(tf.keras.layers.Dense(units=40, activation="relu"))
     dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
-    dense_model.add(tf.keras.layers.Dropout(0.3))
     dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
-    # dense_model.add(tf.keras.layers.Dropout(0.3)) #uncomment for classification
     dense_model.add(tf.keras.layers.Dense(units=(10), activation="relu"))
     dense_model.add(tf.keras.layers.Dropout(0.3))
     dense_model.add(tf.keras.layers.Dense(units=(1), activation="relu"))
-    # dense_model.add(tf.keras.layers.Dense(units=(1), activation='sigmoid')) #uncomment for classification
 
     print(dense_model.summary())
 
@@ -71,7 +67,6 @@ def run_neural_net(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
     dense_model.compile(
         optimizer="adam", loss="mean_squared_error", metrics="mean_absolute_error"
     )
-    # dense_model.compile(optimizer='adam', loss='binary_crossentropy', metrics='accuracy') #uncomment for classification
     dense_model.fit(
         x=x_train,
         y=y_train,
@@ -85,18 +80,13 @@ def run_neural_net(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
     print("Evaluating model")
     print(np.shape(x_test[str(LOOKBACK) + "_close"]))
     preds = dense_model.predict(x_test)
-    # for i in range(len(preds)):
-    #    print(preds[i], '|', y_test.iloc[i])
     plot_predictions(
         preds,
         y_test,
         save=False,
         name="regression" + str(LOOKBACK) + "_" + str(LOOKAHEAD) + ".png",
     )
-    # for t in [0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8]:
-    #    print('Test acc:(', t,')', get_accuracy_diff(preds, y_test, t))
-    # for t in [(0.3, 0.7),(0.4, 0.6),(0.2, 0.8),(0.45, 0.55)]:
-    #    print('Test acc:(', t,')', get_accuracy_diff2(preds, y_test, t[0], t[1]))
     print(dense_model.evaluate(x_test, y_test, batch_size=1))
-    # print(np.shape(preds), np.shape(y_test))
+    print(get_accuracy(preds, y_test))
+    print(pd.Series(y_test).value_counts(normalize=True))
     return dense_model.evaluate(x_test, y_test, batch_size=1)

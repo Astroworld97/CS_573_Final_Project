@@ -6,66 +6,59 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import sklearn.metrics
 import math
+from utilities import *
+from evaluation import *
 
-brazil_data = pd.read_csv("b3_stocks_1994_2020.csv")
 
-# start open
-data = brazil_data.loc[brazil_data["ticker"] == "PETR4"]
-data = data.reset_index()
-features = ["close", "high", "low", "volumen"]
-new_data = pd.DataFrame(index=range(0, len(data)), columns=features)
-new_data["close"][0] = 0
-new_data["high"][0] = 0
-new_data["low"][0] = 0
-new_data["volumen"][0] = 0
-for i in range(1, len(data)):
-    new_data["close"][i] = data["close"][i - 1]
-    new_data["high"][i] = data["high"][i - 1]
-    new_data["low"][i] = data["low"][i - 1]
-    new_data["volumen"][i] = data["volumen"][i - 1]
+def run_svm(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
 
-x = new_data[features]
-y = data["open"]
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    # data management start
+    raw_df = get_ticker_data(TICKER)
+    raw_df = create_features(raw_df, lookback=LOOKBACK, label_col=LABEL_COL)
+    temp = extract_features_cols(raw_df, lookback=LOOKBACK)
+    train_df, test_df = split_test_set(
+        temp
+    )  # the test set is only from the last year. The training set is all other years.
+    normalize_cols(train_df, set(train_df.columns).difference({"time"}))
+    normalize_cols(test_df, set(train_df.columns).difference({"time"}))
+    y_train = train_df["label"]
+    x_train = train_df.drop(["time", "label", "price", "class"], axis=1)
+    x_test = test_df.drop(["time", "label", "price", "class"], axis=1)
+    y_test = test_df["label"]
+    # data management done
 
-svr_rbf_results = []
-for i in range(900, 1000):
-    svr_rbf = SVR(kernel="rbf", C=i)
+    # data_shape = np.shape(x_train)
+    c = 100
+    svr_rbf = SVR(kernel="rbf", C=c)
     svr_rbf.fit(x_train, y_train)
-    svr_rbf_confidence = svr_rbf.score(x_test, y_test)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_rbf.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    mae_rbf = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    # svr_rbf_confidence = svr_rbf.score(y_test, predictions)
     print(
         "svr_rbf confidence, aka R^2: "
-        + str(svr_rbf_confidence)
+        + str(mae_rbf)
         + "for a C parameter of: "
-        + str(i)
+        + str(100)
     )
+    plot_predictions(predictions, y_test, True, "svr_rbf" + str(c))
 
-
-# Note: problems with both SVR(kernel="linear") and LinearSVR()
-# svr_lin = LinearSVR(penalty="l1", loss="l2", dual=False)
-# svr_lin.fit(x_train, y_train)
-# svr_lin = SVR(kernel="linear", C=1)
-# svr_lin.fit(x_train, y_train)
-
-# svr_poly = SVR(kernel="poly")
-# svr_poly.fit(x_train, y_train)
-
-# for i in range(1, 1000):
-#     svr_poly = SVR(kernel="poly", C=i)
-#     svr_poly.fit(x_train, y_train)
-#     svr_poly_confidence = svr_poly.score(x_test, y_test)
-#     print(
-#         "svr_poly confidence, aka R^2: "
-#         + str(svr_poly_confidence)
-#         + "for a C parameter of: "
-#         + str(i)
-#     )
-
-# svr_rbf_confidence = svr_rbf.score(x_test, y_test)
-# print("svr_rbf confidence, aka R^2: " + str(svr_rbf_confidence))
-
-# svr_lin_confidence = svr_lin.score(x_test, y_test)
-# print("svr_lin confidence: " + svr_lin_confidence)
-
-# svr_poly_confidence = svr_poly.score(x_test, y_test)
-# print("svr_poly confidence, aka R^2: " + str(svr_poly_confidence))
+    svr_poly = SVR(kernel="poly", C=c)
+    svr_poly.fit(x_train, y_train)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_poly.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    # svr_poly_confidence = svr_poly.score(y_test, predictions)
+    mae_poly = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    print(
+        "svr_poly confidence, aka R^2: "
+        + str(mae_poly)
+        + "for a C parameter of: "
+        + str(100)
+    )
+    plot_predictions(predictions, y_test, True, "svr_poly" + str(c))
