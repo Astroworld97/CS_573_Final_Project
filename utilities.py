@@ -166,3 +166,18 @@ def normalize_cols(df, cols):
 # TODO
 def split_test_set_by_ticker():
     pass
+
+
+def get_preds_mov_avg(df, target_col, N, pred_min, offset):
+    pred_list = (
+        df[target_col].rolling(window=N, min_periods=1).mean()
+    )  # len(pred_list) = len(df)
+
+    # Add one timestep to the predictions
+    pred_list = np.concatenate((np.array([np.nan]), np.array(pred_list[:-1])))
+
+    # If the values are < pred_min, set it to be pred_min
+    pred_list = np.array(pred_list)
+    pred_list[pred_list < pred_min] = pred_min
+
+    return pred_list[offset:]
