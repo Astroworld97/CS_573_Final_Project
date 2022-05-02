@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 #function to create a dataframe with two columns: features(data) and labels
 #each row of the data column has (lookback) raw data rows - meaning, we use the price of
 #the previous ten days to predict the price of the eleventh day
-def create_features(df, lookback=10, label_col='close', lookahead=1):
+def create_features(df, sma_periods, lookback=10, label_col='close', lookahead=1):
     df=df.sort_values('datetime')
     cols=['data','label', 'time', 'price', 'class', 'diff', 'ticker']
     feat_df=pd.DataFrame(columns=cols)
@@ -20,6 +20,9 @@ def create_features(df, lookback=10, label_col='close', lookahead=1):
         class_arr=[]
         diff=[]
         ticker=[]
+        sma_arrs=[]
+        for a in sma_periods:
+            sma_arrs.append([])
         label.append(0)
         for i in range(lookback, len(temp_df)-lookahead):
             row=temp_df[i-lookback:i]
@@ -34,6 +37,12 @@ def create_features(df, lookback=10, label_col='close', lookahead=1):
             price.append(temp_df.iloc[i][label_col])
             diff.append(temp_label-temp_df.iloc[i-1][label_col])
             ticker.append(temp_df.iloc[i]['ticker'])
+            for j in range(len(sma_periods)):
+                if(i<sma_periods[j]):
+                    sma_arrs[j].append(0)
+                else:
+                    sma_arrs[j].append(temp_df[(i-sma_periods[j]):i][label_col].mean())
+                #print(sma_arrs[j][-1])
         label.remove(0)
         t_feat_df['data']=data
         t_feat_df['label']=label
@@ -42,6 +51,9 @@ def create_features(df, lookback=10, label_col='close', lookahead=1):
         t_feat_df['class']=class_arr
         t_feat_df['diff']=diff
         t_feat_df['ticker']=ticker
+        for j in range(len(sma_periods)):
+            name='sma_'+str(sma_periods[j])
+            t_feat_df[name]=sma_arrs[j]
         feat_df=pd.concat([feat_df, t_feat_df], ignore_index=True)
     return feat_df
 
@@ -92,7 +104,7 @@ def extract_features_1d(df, lookback=10):
     new_df['label']=df['label']
     return new_df
 
-def extract_features_cols(df, lookback=10):
+def extract_features_cols(df, sma_periods, lookback=10):
     cols_of_interest=['open', 'high', 'low', 'close', 'volumen']
     out_df=pd.DataFrame()
     for i in range(1,lookback+1):
@@ -114,6 +126,10 @@ def extract_features_cols(df, lookback=10):
     out_df.loc[:,'diff']=df['diff']
     #add ticker col
     out_df['ticker']=df['ticker']
+    #add sma cols
+    for j in range(len(sma_periods)):
+            name='sma_'+str(sma_periods[j])
+            out_df[name]=df[name]
     return out_df
 
 
