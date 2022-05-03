@@ -4,6 +4,12 @@ from utilities import *
 import tensorflow as tf
 from evaluation import *
 import pickle as pkl
+from sklearn.svm import SVR
+from sklearn.svm import LinearSVR
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+import sklearn.metrics
+import math
 
 
 def run_svm_sma(
@@ -105,5 +111,5 @@ def run_svm_sma(
         save=False,
     )
     print(dense_model.evaluate(x_test, y_test, batch_size=1))
-    print("Accuracy:", get_accuracy(preds, y_test))
+    print("Accuracy:", get_accuracy(predictions, y_test))
     return dense_model.evaluate(x_test, y_test, batch_size=1)
