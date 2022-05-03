@@ -1,0 +1,238 @@
+from sklearn.linear_model import LinearRegression
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+import sklearn.metrics
+import math
+from utilities import *
+from evaluation import *
+
+
+def run_lin_regression(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
+
+    raw_df = get_ticker_data(TICKER)
+    raw_df = create_features(raw_df, lookback=LOOKBACK, label_col=LABEL_COL)
+    temp = extract_features_cols(raw_df, lookback=LOOKBACK)
+    train_df, test_df = split_test_set(
+        temp
+    )  # the test set is only from the last year. The training set is all other years.
+    normalize_cols(train_df, set(train_df.columns).difference({"time"}))
+    normalize_cols(test_df, set(train_df.columns).difference({"time"}))
+    y_train = train_df["label"]
+    x_train = train_df.drop(["time", "label", "price", "class"], axis=1)
+    x_test = test_df.drop(["time", "label", "price", "class"], axis=1)
+    y_test = test_df["label"]
+    # print(train_df.columns)
+
+    data_shape = np.shape(x_train)
+
+    # start close
+    # data = brazil_data.loc[brazil_data["VALE3"]]
+    # features = ["open", "high", "low", "volumen"]
+    # new_data = pd.DataFrame(index=range(0, len(data)), columns=features)
+    # new_data["open"][0] = 0
+    # new_data["high"][0] = 0
+    # new_data["low"][0] = 0
+    # new_data["volumen"][0] = 0
+    # for i in range(1, len(data)):
+    #     new_data["open"][i] = data["open"][i - 1]
+    #     new_data["high"][i] = data["high"][i - 1]
+    #     new_data["low"][i] = data["low"][i - 1]
+    #     new_data["volumen"][i] = data["volumen"][i - 1]
+
+    linreg = LinearRegression().fit(x_train, y_train)
+    predictions = linreg.predict(x_test)
+
+    mae = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    print("MAE: " + str(mae))
+    mse = sklearn.metrics.mean_squared_error(y_test, predictions)
+    print("MSE: " + str(mse))
+    rmse = math.sqrt(mse)
+    print("RMSE: " + str(rmse))
+    r2 = sklearn.metrics.r2_score(y_test, predictions)
+    print("r^2: " + str(r2))
+    plot_predictions(predictions, y_test, True, "test_plot.png")
+    # end close
+
+
+from sklearn.svm import SVR
+from sklearn.svm import LinearSVR
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+import sklearn.metrics
+import math
+from utilities import *
+from evaluation import *
+
+
+def run_svm(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
+
+    # data management start
+    raw_df = get_ticker_data(TICKER)
+    raw_df = create_features(raw_df, lookback=LOOKBACK, label_col=LABEL_COL)
+    temp = extract_features_cols(raw_df, lookback=LOOKBACK)
+    train_df, test_df = split_test_set(
+        temp
+    )  # the test set is only from the last year. The training set is all other years.
+    normalize_cols(train_df, set(train_df.columns).difference({"time"}))
+    normalize_cols(test_df, set(train_df.columns).difference({"time"}))
+    y_train = train_df["label"]
+    x_train = train_df.drop(["time", "label", "price", "class"], axis=1)
+    x_test = test_df.drop(["time", "label", "price", "class"], axis=1)
+    y_test = test_df["label"]
+    # data management done
+
+    # data_shape = np.shape(x_train)
+    c = 100
+    svr_rbf = SVR(kernel="rbf", C=c)
+    svr_rbf.fit(x_train, y_train)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_rbf.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    mae_rbf = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    # svr_rbf_confidence = svr_rbf.score(y_test, predictions)
+    print(
+        "svr_rbf confidence, aka R^2: "
+        + str(mae_rbf)
+        + "for a C parameter of: "
+        + str(100)
+    )
+    plot_predictions(predictions, y_test, True, "svr_rbf" + str(c))
+
+    svr_poly = SVR(kernel="poly", C=c)
+    svr_poly.fit(x_train, y_train)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_poly.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    # svr_poly_confidence = svr_poly.score(y_test, predictions)
+    mae_poly = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    print(
+        "svr_poly confidence, aka R^2: "
+        + str(mae_poly)
+        + "for a C parameter of: "
+        + str(100)
+    )
+    plot_predictions(predictions, y_test, True, "svr_poly" + str(c))
+
+
+
+
+
+
+
+
+/usr/local/bin/python3 /Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/main.py
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+main.py
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5]
+MAE: 0.022888984427072476
+MSE: 0.0010161555663813957
+RMSE: 0.031877195083341255
+r^2: 0.9765595240852751
+Traceback (most recent call last):
+  File "/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/main.py", line 34, in <module>
+    test_err = run_lin_regression_sma(
+  File "/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/lin_regression_sma.py", line 125, in run_lin_regression_sma
+    print("Accuracy:", get_accuracy(preds, y_test))
+NameError: name 'preds' is not defined
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+lin_regression_sma.py
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+main.py
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model []
+MAE: 0.0229702611840856
+MSE: 0.0010088762217895563
+RMSE: 0.031762811931401104
+r^2: 0.9767274425686503
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5]
+MAE: 0.022888984427072476
+MSE: 0.0010161555663813957
+RMSE: 0.031877195083341255
+r^2: 0.9765595240852751
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [10]
+MAE: 0.02296765220296639
+MSE: 0.0010255251141433183
+RMSE: 0.03202382104220729
+r^2: 0.9763433892079872
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [20]
+MAE: 0.02294180268242503
+MSE: 0.0010098901146611964
+RMSE: 0.031778768299938816
+r^2: 0.9767040542881309
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [50]
+MAE: 0.022992570612243666
+MSE: 0.0010118737861376339
+RMSE: 0.03180996362993259
+r^2: 0.9766582953462872
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5, 10, 20, 50]
+MAE: 0.02318821035009936
+MSE: 0.0010416110161305344
+RMSE: 0.03227399907248146
+r^2: 0.9759723227979092
+Accuracy: 0.4493927125506073
+[0.0229702611840856, 0.022888984427072476, 0.02296765220296639, 0.02294180268242503, 0.022992570612243666, 0.02318821035009936]
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % 

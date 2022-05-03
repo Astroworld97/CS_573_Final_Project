@@ -1,0 +1,178 @@
+/usr/local/bin/python3 /Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/main.py
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+main.py
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5]
+MAE: 0.022888984427072476
+MSE: 0.0010161555663813957
+RMSE: 0.031877195083341255
+r^2: 0.9765595240852751
+Traceback (most recent call last):
+  File "/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/main.py", line 34, in <module>
+    test_err = run_lin_regression_sma(
+  File "/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/lin_regression_sma.py", line 125, in run_lin_regression_sma
+    print("Accuracy:", get_accuracy(preds, y_test))
+NameError: name 'preds' is not defined
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+lin_regression_sma.py
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+main.py
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model []
+MAE: 0.0229702611840856
+MSE: 0.0010088762217895563
+RMSE: 0.031762811931401104
+r^2: 0.9767274425686503
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5]
+MAE: 0.022888984427072476
+MSE: 0.0010161555663813957
+RMSE: 0.031877195083341255
+r^2: 0.9765595240852751
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [10]
+MAE: 0.02296765220296639
+MSE: 0.0010255251141433183
+RMSE: 0.03202382104220729
+r^2: 0.9763433892079872
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [20]
+MAE: 0.02294180268242503
+MSE: 0.0010098901146611964
+RMSE: 0.031778768299938816
+r^2: 0.9767040542881309
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [50]
+MAE: 0.022992570612243666
+MSE: 0.0010118737861376339
+RMSE: 0.03180996362993259
+r^2: 0.9766582953462872
+Accuracy: 0.4493927125506073
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5, 10, 20, 50]
+MAE: 0.02318821035009936
+MSE: 0.0010416110161305344
+RMSE: 0.03227399907248146
+r^2: 0.9759723227979092
+Accuracy: 0.4493927125506073
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users
+/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/
+main.py
+(10, 1)
+Traceback (most recent call last):
+  File "/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/main.py", line 35, in <module>
+    test_err = run_svm_sma(ticker, lookback, lookahead, ma, gen_df=True)
+NameError: name 'run_svm_sma' is not defined
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project % /usr/local/bin/python3 /Users/iangonzalez/Desktop/eskul/Spring_2022/CS_57
+3_ML_Hongyang_Gao/CS_573_Final_Project/main.py
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model []
+Accuracy: 0.5101214574898786
+svr_rbf MAE: 0.17380971958519334for a C parameter of: 100
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5]
+Accuracy: 0.5101214574898786
+svr_rbf MAE: 0.17272596831344555for a C parameter of: 100
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [10]
+Accuracy: 0.5101214574898786
+svr_rbf MAE: 0.17224458611334342for a C parameter of: 100
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [20]
+Accuracy: 0.5182186234817814
+svr_rbf MAE: 0.1433250073285114for a C parameter of: 100
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [50]
+Accuracy: 0.5182186234817814
+svr_rbf MAE: 0.11632504771393767for a C parameter of: 100
+(10, 1)
+/Users/iangonzalez/Desktop/eskul/Spring_2022/CS_573_ML_Hongyang_Gao/CS_573_Final_Project/utilities.py:163: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df.loc[:, col]=(df[col]-df[col].min())/(df[col].max()-df[col].min())
+Evaluating model [5, 10, 20, 50]
+Accuracy: 0.5141700404858299
+svr_rbf MAE: 0.11643860252029972for a C parameter of: 100
+[0.17380971958519334, 0.17272596831344555, 0.17224458611334342, 0.1433250073285114, 0.11632504771393767, 0.11643860252029972]
+iangonzalez@Ians-MacBook-Pro-7 CS_573_Final_Project %  

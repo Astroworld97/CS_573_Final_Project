@@ -70,46 +70,122 @@ def run_svm_sma(
     data_shape = np.shape(x_train)
 
     # build dense model
-    dense_model = tf.keras.Sequential()
-    dense_model.add(tf.keras.Input(shape=data_shape))
-    dense_model.add(tf.keras.layers.Dense(units=40, activation="relu"))
-    dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
-    dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
-    dense_model.add(tf.keras.layers.Dense(units=(10), activation="relu"))
-    dense_model.add(tf.keras.layers.Dropout(0.3))
-    dense_model.add(tf.keras.layers.Dense(units=(1), activation="relu"))
+    data_shape = np.shape(x_train)
+    c = 100
+    svr_rbf = SVR(kernel="rbf", C=c)
+    svr_rbf.fit(x_train, y_train)
+    svr_poly = SVR(kernel="poly", C=c)
+    svr_poly.fit(x_train, y_train)
 
-    print(dense_model.summary())
+    # dense_model = tf.keras.Sequential()
+    # dense_model.add(tf.keras.Input(shape=data_shape))
+    # dense_model.add(tf.keras.layers.Dense(units=40, activation="relu"))
+    # dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
+    # dense_model.add(tf.keras.layers.Dense(units=(20), activation="relu"))
+    # dense_model.add(tf.keras.layers.Dense(units=(10), activation="relu"))
+    # dense_model.add(tf.keras.layers.Dropout(0.3))
+    # dense_model.add(tf.keras.layers.Dense(units=(1), activation="relu"))
 
-    # fit model
-    dense_model.compile(
-        optimizer="adam", loss="mean_squared_error", metrics="mean_absolute_error"
-    )
-    # dense_model.compile(optimizer='adam', loss=loss, metrics='mean_absolute_error')
-    dense_model.fit(
-        x=x_train,
-        y=y_train,
-        validation_split=0.3,
-        shuffle=True,
-        batch_size=16,
-        epochs=30,
-    )
+    # print(dense_model.summary())
+
+    # # fit model
+    # dense_model.compile(
+    #     optimizer="adam", loss="mean_squared_error", metrics="mean_absolute_error"
+    # )
+    # # dense_model.compile(optimizer='adam', loss=loss, metrics='mean_absolute_error')
+    # dense_model.fit(
+    #     x=x_train,
+    #     y=y_train,
+    #     validation_split=0.3,
+    #     shuffle=True,
+    #     batch_size=16,
+    #     epochs=30,
+    # )
 
     # evaluate model
     print("Evaluating model", moving_averages)
-    preds = dense_model.predict(x_test)
-    plot_predictions(
-        preds,
-        y_test,
-        name="regression" + str(LOOKBACK) + "_" + str(LOOKAHEAD) + ".png",
-        save=False,
-    )
-    plot_predictions(
-        preds[200:400],
-        y_test[200:400],
-        name="regression" + str(LOOKBACK) + "_" + str(LOOKAHEAD) + ".png",
-        save=False,
-    )
-    print(dense_model.evaluate(x_test, y_test, batch_size=1))
+    predictions = svr_rbf.predict(x_test)
+    # preds = dense_model.predict(x_test)
+    # plot_predictions(
+    #     preds,
+    #     y_test,
+    #     name="regression" + str(LOOKBACK) + "_" + str(LOOKAHEAD) + ".png",
+    #     save=False,
+    # )
+    # plot_predictions(
+    #     preds[200:400],
+    #     y_test[200:400],
+    #     name="regression" + str(LOOKBACK) + "_" + str(LOOKAHEAD) + ".png",
+    #     save=False,
+    # )
+    # print(dense_model.evaluate(x_test, y_test, batch_size=1))
     print("Accuracy:", get_accuracy(predictions, y_test))
-    return dense_model.evaluate(x_test, y_test, batch_size=1)
+    mae_rbf = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    # svr_rbf_confidence = svr_rbf.score(y_test, predictions)
+    print("svr_rbf MAE: " + str(mae_rbf) + "for a C parameter of: " + str(100))
+    return mae_rbf
+    # Uncomment to plot:# plot_predictions(predictions, y_test, True, "svr_rbf" + str(c))
+    # return dense_model.evaluate(x_test, y_test, batch_size=1)
+    # predictions = svr_poly.predict(x_test)
+    # mae_poly = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    #     print(
+    #     "svr_poly confidence MAE: "
+    #     + str(mae_poly)
+    #     + "for a C parameter of: "
+    #     + str(100)
+    # )
+    # Uncomment to plot: #plot_predictions(predictions, y_test, True, "svr_poly" + str(c))
+
+
+def run_svm(TICKER, LOOKBACK, LOOKAHEAD, LABEL_COL="close"):
+
+    # data management start
+    raw_df = get_ticker_data(TICKER)
+    raw_df = create_features(raw_df, lookback=LOOKBACK, label_col=LABEL_COL)
+    temp = extract_features_cols(raw_df, lookback=LOOKBACK)
+    train_df, test_df = split_test_set(
+        temp
+    )  # the test set is only from the last year. The training set is all other years.
+    normalize_cols(train_df, set(train_df.columns).difference({"time"}))
+    normalize_cols(test_df, set(train_df.columns).difference({"time"}))
+    y_train = train_df["label"]
+    x_train = train_df.drop(["time", "label", "price", "class"], axis=1)
+    x_test = test_df.drop(["time", "label", "price", "class"], axis=1)
+    y_test = test_df["label"]
+    # data management done
+
+    data_shape = np.shape(x_train)
+    c = 100
+    svr_rbf = SVR(kernel="rbf", C=c)
+    svr_rbf.fit(x_train, y_train)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_rbf.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    mae_rbf = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    # svr_rbf_confidence = svr_rbf.score(y_test, predictions)
+    print(
+        "svr_rbf confidence, aka R^2: "
+        + str(mae_rbf)
+        + "for a C parameter of: "
+        + str(100)
+    )
+    plot_predictions(predictions, y_test, True, "svr_rbf" + str(c))
+
+    svr_poly = SVR(kernel="poly", C=c)
+    svr_poly.fit(x_train, y_train)
+    # x_test = x_test.to_numpy()
+    # x_test = x_test.reshape(-1, 26)
+    predictions = svr_poly.predict(x_test)
+    # y_test = y_test.to_numpy()
+    # y_test = y_test.reshape(-1, 26)
+    # svr_poly_confidence = svr_poly.score(y_test, predictions)
+    mae_poly = sklearn.metrics.mean_absolute_error(y_test, predictions)
+    print(
+        "svr_poly confidence, aka R^2: "
+        + str(mae_poly)
+        + "for a C parameter of: "
+        + str(100)
+    )
+    plot_predictions(predictions, y_test, True, "svr_poly" + str(c))

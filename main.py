@@ -6,6 +6,8 @@ import tensorflow as tf
 from evaluation import *
 from neural_net import *
 from lin_regression_sma import *
+from svm_sma import *
+
 
 # ticker=['VALE3', 'PETR4', 'MGLU3', 'ITUB4', 'GOLL4']
 # ticker=['VALE3', 'PETR4', 'MGLU3', 'VVAR3', 'ITUB4', 'GOLL4', 'LREN3', 'WEGE3', 'CTSA4', 'EZTC3', 'GGBR4',
@@ -32,9 +34,7 @@ for lookback in lookback_arr:
         for ma in moving_averages:
             conditions.append((lookback, lookahead))
             print(conditions[-1])
-            test_err = run_lin_regression_sma(
-                ticker, lookback, lookahead, ma, gen_df=True
-            )
+            test_err = run_svm_sma(ticker, lookback, lookahead, ma, gen_df=True)
             test_err_arr.append(test_err)
 
 
